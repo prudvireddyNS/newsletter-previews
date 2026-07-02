@@ -13,6 +13,7 @@ function setView(view, options = {}){
     b.classList.toggle('active', isActive);
     b.setAttribute('aria-selected', isActive ? 'true' : 'false');
   });
+  document.getElementById('view-home').classList.toggle('active', view==='home');
   document.getElementById('view-daily').classList.toggle('active', view==='daily');
   document.getElementById('view-weekly').classList.toggle('active', view==='weekly');
   document.getElementById('view-section').classList.remove('active');
@@ -29,6 +30,7 @@ window.addEventListener('popstate', () => {
 });
 
 hydrateChrome();
+renderHome();
 renderSignals();
 renderTools();
 renderBlogs();

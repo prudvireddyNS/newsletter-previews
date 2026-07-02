@@ -63,22 +63,11 @@ let activeView = initialView;
 let sectionReturnFocus = null;
 
 function readRoute(){
-  const params = new URLSearchParams(window.location.search);
-  let view = params.get('view');
-  let section = params.get('section');
-  if(!availableViews.includes(view)) view = null;
-  if(!SECTIONS[section]) section = null;
-  if(section && availableViews.includes('weekly')) view = 'weekly';
-  return { view, section };
+  return { view: null, section: null };
 }
 
 function syncRoute(view, section){
-  const params = new URLSearchParams(window.location.search);
-  params.set('view', view);
-  if(section) params.set('section', section); else params.delete('section');
-  const query = params.toString();
-  const next = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
-  window.history.pushState({ view, section }, '', next);
+  window.history.replaceState({ view, section }, '', window.location.pathname + window.location.hash);
 }
 
 function openSection(key, options = {}){
@@ -163,17 +152,43 @@ function editionMeta(edition){
 function updateChrome(view, section){
   const edition = view === 'weekly' ? weeklyEdition : dailyEdition;
   const footerBits = document.querySelectorAll('.site-footer-inner > div');
-  const meta = view === 'weekly'
-    ? `Edition #${escapeHtml(weeklyEdition.masthead.edition_number)} · ${escapeHtml(weeklyEdition.masthead.date)}`
-    : escapeHtml(editionMeta(dailyEdition));
+  const meta = view === 'home'
+    ? `Latest · ${escapeHtml(editionMeta(dailyEdition))}`
+    : view === 'weekly'
+      ? `Edition #${escapeHtml(weeklyEdition.masthead.edition_number)} · ${escapeHtml(weeklyEdition.masthead.date)}`
+      : escapeHtml(editionMeta(dailyEdition));
 
+  const newsletterName = edition.masthead.newsletter_name || 'Ekloge';
   document.title = section
-    ? `Frontier Signal — ${SECTIONS[section].title}`
-    : `Frontier Signal — ${edition.masthead.date}`;
+    ? `${newsletterName} — ${SECTIONS[section].title}`
+    : view === 'home'
+      ? `${newsletterName} — Only What Matters`
+      : `${newsletterName} — ${edition.masthead.date}`;
   document.getElementById('topbarMeta').innerHTML = `<span><span class="dot-live"></span>${meta}</span>`;
   document.querySelector('.skip-link').setAttribute('href', section ? '#view-section' : `#view-${view}`);
   footerBits[0].innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C2562F" stroke-width="2" style="vertical-align:-2px; margin-right:6px;"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>${escapeHtml(edition.footer.share_text)}`;
   footerBits[1].innerHTML = `${escapeHtml(edition.footer.receiving_reason)} <a href="${safeHref(edition.footer.unsubscribe_url)}">Unsubscribe</a>`;
+}
+
+function renderHome(){
+  document.getElementById('homeLede').textContent = dailyEdition.hero.subtitle || 'The latest AI signal, sorted for builders.';
+  document.getElementById('homeDailyTitle').textContent = dailyEdition.masthead.date || activeDailyDate;
+  document.getElementById('homeDailyMeta').textContent = `${signals.length + tools.length + blogs.length + funding.length + radar.length} curated items across 5 sections.`;
+  document.getElementById('homeWeeklyTitle').textContent = weeklyEdition.masthead.date || 'Weekly rollup';
+  document.getElementById('homeWeeklyMeta').textContent = `${weeklySignals.length + weeklyTools.length + weeklyBlogs.length + weeklyFunding.length + weeklyRadar.length} weekly items selected for a slower read.`;
+  document.getElementById('homeArchiveList').innerHTML = dailyEditions.slice(0, 10).map(item => `
+    <button type="button" class="${item.date === activeDailyDate ? 'active' : ''}" onclick="setDailyDate('${escapeHtml(item.date)}')">${escapeHtml(item.date)}</button>
+  `).join('');
+}
+
+function hydrateArchivePicker(){
+  const select = document.getElementById('archiveSelect');
+  select.innerHTML = dailyEditions.map(item => `<option value="${escapeHtml(item.date)}">${escapeHtml(item.date)}</option>`).join('');
+  select.value = activeDailyDate;
+  if(!select.dataset.bound){
+    select.addEventListener('change', () => setDailyDate(select.value));
+    select.dataset.bound = 'true';
+  }
 }
 
 function hydrateChrome(){
@@ -181,9 +196,11 @@ function hydrateChrome(){
     const isAvailable = availableViews.includes(button.dataset.view);
     button.hidden = !isAvailable;
   });
+  document.getElementById('viewToggle').classList.toggle('two-options', availableViews.length === 2);
   if(availableViews.length < 2){
     document.getElementById('viewToggle').style.display = 'none';
   }
+  hydrateArchivePicker();
 
   document.querySelector('[data-section="signals"] .count-pill').textContent = `${signals.length} today`;
   document.querySelector('[data-section="tools"] .count-pill').textContent = `${tools.length} today`;

@@ -28,10 +28,13 @@ function readJsonScript(id){
   return JSON.parse(document.getElementById(id).textContent);
 }
 
-const dailyEdition = readJsonScript('daily-edition-json');
-const weeklyEdition = readJsonScript('weekly-edition-json');
+const dailyEditions = readJsonScript('daily-editions-json');
+const weeklyEditions = readJsonScript('weekly-editions-json');
+let dailyEdition = readJsonScript('daily-edition-json');
+let weeklyEdition = readJsonScript('weekly-edition-json');
 const initialView = readJsonScript('initial-view-json');
 const availableViews = readJsonScript('available-views-json');
+let activeDailyDate = dailyEditions[0]?.date || '';
 
 const signalKinds = ['gpt','mcp','gemini','perp'];
 const eventKinds = ['event1','event2','event3','event4','event5'];
@@ -132,19 +135,63 @@ function toRadar(edition){
   }));
 }
 
-const signals = toSignals(dailyEdition);
-const tools = toTools(dailyEdition);
-const blogs = toBlogs(dailyEdition);
-const funding = toFunding(dailyEdition);
-const radar = toRadar(dailyEdition);
+let signals = [];
+let tools = [];
+let blogs = [];
+let funding = [];
+let radar = [];
+let weeklySignals = [];
+let weeklyTools = [];
+let weeklyBlogs = [];
+let weeklyFunding = [];
+let weeklyRadar = [];
+let recap = [];
 
-const weeklySignals = toSignals(weeklyEdition);
-const weeklyTools = toTools(weeklyEdition);
-const weeklyBlogs = toBlogs(weeklyEdition);
-const weeklyFunding = toFunding(weeklyEdition);
-const weeklyRadar = toRadar(weeklyEdition);
+function latestWeeklyForDate(date){
+  return weeklyEditions.find(item => item.date <= date) || weeklyEditions[0] || null;
+}
 
-const recap = weeklySignals.slice(0,3).map(item => ({
-  title: item.title,
-  sub: 'Weekly anchor signal'
-}));
+function rebuildEditionData(){
+  signals = toSignals(dailyEdition);
+  tools = toTools(dailyEdition);
+  blogs = toBlogs(dailyEdition);
+  funding = toFunding(dailyEdition);
+  radar = toRadar(dailyEdition);
+  weeklySignals = toSignals(weeklyEdition);
+  weeklyTools = toTools(weeklyEdition);
+  weeklyBlogs = toBlogs(weeklyEdition);
+  weeklyFunding = toFunding(weeklyEdition);
+  weeklyRadar = toRadar(weeklyEdition);
+  recap = weeklySignals.slice(0,3).map(item => ({
+    title: item.title,
+    sub: 'Weekly anchor signal'
+  }));
+}
+
+function setDailyDate(date, options = {}){
+  const { render = true, switchToDaily = true } = options;
+  const entry = dailyEditions.find(item => item.date === date);
+  if(!entry) return;
+  activeDailyDate = entry.date;
+  dailyEdition = entry.edition;
+  const weeklyEntry = latestWeeklyForDate(entry.date);
+  if(weeklyEntry) weeklyEdition = weeklyEntry.edition;
+  rebuildEditionData();
+  if(render){
+    hydrateChrome();
+    renderHome();
+    renderSignals();
+    renderTools();
+    renderBlogs();
+    renderFunding();
+    renderRadar();
+    renderDashboard();
+    if(activeView === 'weekly' && document.getElementById('view-section').classList.contains('active')){
+      closeSection({ sync: false });
+    }
+    updateChrome(activeView || initialView);
+  }
+  if(switchToDaily) setView('daily');
+}
+
+rebuildEditionData();
