@@ -34,6 +34,7 @@ let dailyEdition = readJsonScript('daily-edition-json');
 let weeklyEdition = readJsonScript('weekly-edition-json');
 const initialView = readJsonScript('initial-view-json');
 const availableViews = readJsonScript('available-views-json');
+const subscribeApiBaseUrl = readJsonScript('subscribe-api-base-url-json');
 let activeDailyDate = dailyEditions[0]?.date || '';
 
 const signalKinds = ['gpt','mcp','gemini','perp'];

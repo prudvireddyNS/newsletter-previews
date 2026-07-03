@@ -351,6 +351,71 @@
     color:var(--ink);
     text-wrap:balance;
   }
+  .home-subscribe{
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) minmax(320px, 460px);
+    gap:28px;
+    align-items:center;
+    margin-top:24px;
+    margin-bottom:6px;
+  }
+  .home-subscribe > div,
+  .subscribe-form{
+    border:1px solid rgba(11,30,36,.14);
+    border-radius:24px;
+    background:rgba(252,255,251,.82);
+    box-shadow:var(--shadow-sm);
+    padding:26px;
+  }
+  .home-subscribe h2{
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--ink);
+    font-weight:700;
+    font-size:clamp(30px, 4vw, 54px);
+    line-height:.96;
+    letter-spacing:-1.8px;
+    margin:0 0 12px;
+  }
+  .home-subscribe p{margin:0; color:var(--ink-soft); font-size:15px; line-height:1.6;}
+  .subscribe-form label{
+    display:block;
+    margin-bottom:10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+    color:var(--terracotta);
+  }
+  .subscribe-row{display:flex; gap:8px;}
+  .subscribe-row input{
+    min-width:0;
+    flex:1;
+    border:1px solid var(--rule);
+    border-radius:999px;
+    background:rgba(252,255,251,.95);
+    color:var(--ink);
+    padding:12px 14px;
+    font:600 14px/1 'Inter', system-ui, sans-serif;
+  }
+  .subscribe-row button{
+    border:1px solid var(--ink);
+    border-radius:999px;
+    background:var(--ink);
+    color:var(--paper);
+    padding:12px 16px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    cursor:pointer;
+  }
+  .subscribe-row button:disabled{opacity:.62; cursor:wait;}
+  .subscribe-status{min-height:20px; margin:10px 0 0; font-size:12px; color:var(--ink-soft);}
+  .subscribe-status.error{color:#A03922;}
+  .subscribe-status.success{color:var(--terracotta-dark); font-weight:700;}
+
   .home-board{
     display:grid;
     grid-template-columns:repeat(3, minmax(0, 1fr));
@@ -429,6 +494,7 @@
   @media (max-width:1020px){
     .home-hero-inner{grid-template-columns:1fr; padding-top:44px; padding-bottom:250px;}
     .home-edition-card{max-width:430px; margin-top:0;}
+    .home-subscribe,
     .home-board{grid-template-columns:1fr;}
     .home-manifesto{grid-template-columns:1fr;}
   }
@@ -441,6 +507,10 @@
     .home-skyline{width:calc(100vw - 40px); bottom:0;}
     .home-edition-card{padding:22px; border-radius:22px;}
     .home-manifesto{padding-top:28px;}
+    .home-subscribe > div,
+    .subscribe-form{padding:22px; border-radius:22px;}
+    .subscribe-row{flex-direction:column;}
+    .subscribe-row button{width:100%;}
     .home-panel{min-height:0; padding:24px; border-radius:22px;}
   }
 
