@@ -167,7 +167,7 @@ function updateChrome(view, section){
   document.getElementById('topbarMeta').innerHTML = `<span><span class="dot-live"></span>${meta}</span>`;
   document.querySelector('.skip-link').setAttribute('href', section ? '#view-section' : `#view-${view}`);
   footerBits[0].innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C2562F" stroke-width="2" style="vertical-align:-2px; margin-right:6px;"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>${escapeHtml(edition.footer.share_text)}`;
-  footerBits[1].innerHTML = `${escapeHtml(edition.footer.receiving_reason)} <a href="${safeHref(edition.footer.unsubscribe_url)}">Unsubscribe</a>`;
+  footerBits[1].textContent = 'Email editions are sent only to subscribers.';
 }
 
 function renderHome(){
