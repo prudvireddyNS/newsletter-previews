@@ -1,6 +1,19 @@
 /* ============================================================
    VIEW SWITCH
 ============================================================ */
+function scrollToSubscribeForm(){
+  setView('home');
+  setTimeout(() => {
+    const form = document.getElementById('subscribeForm');
+    if(!form) return;
+    form.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'center' });
+    form.classList.remove('subscribe-form-highlight');
+    void form.offsetWidth;
+    form.classList.add('subscribe-form-highlight');
+    setTimeout(() => form.classList.remove('subscribe-form-highlight'), 1700);
+  }, 0);
+}
+
 function setView(view, options = {}){
   const { sync = true, scroll = true } = options;
   if(!availableViews.includes(view)){

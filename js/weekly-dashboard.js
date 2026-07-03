@@ -25,7 +25,7 @@ function renderDashboard(){
         <div class="panel-head-left">${panelIcon(svgSignal)}<h3>Top Stories</h3><span class="count-pill">${signals.length} this week</span></div>
       </div>
       ${signals.length ? signals.slice(0,storiesCap).map(s=>storyRow(s)).join('') : emptyState('top stories')}
-      ${viewAllBtn(signals.length,storiesCap,'stories')}
+      ${viewAllBtn(signals.length,storiesCap,'stories','stories')}
     </div>`;
 
   function storyRow(s){
@@ -47,7 +47,7 @@ function renderDashboard(){
         <div class="panel-head-left">${panelIcon(svgRadar)}<h3>Radar</h3><span class="count-pill">${radar.length} events</span></div>
       </div>
       ${radar.length ? radar.slice(0,radarCap).map(r=>radarRow(r)).join('') : emptyState('radar items')}
-      ${viewAllBtn(radar.length,radarCap,'events')}
+      ${viewAllBtn(radar.length,radarCap,'events','radar items')}
     </div>`;
 
   function radarRow(r){
@@ -70,7 +70,7 @@ function renderDashboard(){
       <div class="p-tools-grid">
         ${tools.length ? tools.slice(0,toolsCap).map(t=>toolCell(t)).join('') : emptyState('tools or repos')}
       </div>
-      ${viewAllBtn(tools.length,toolsCap,'tools')}
+      ${viewAllBtn(tools.length,toolsCap,'tools','tools')}
     </div>`;
 
   function toolCell(t){
@@ -92,7 +92,7 @@ function renderDashboard(){
         <div class="panel-head-left">${panelIcon(svgBlog)}<h3>Blogs</h3><span class="count-pill">${blogs.length} this week</span></div>
       </div>
       ${blogs.length ? blogs.slice(0,blogsCap).map(b=>blogRow(b)).join('') : emptyState('blogs')}
-      ${viewAllBtn(blogs.length,blogsCap,'reads')}
+      ${viewAllBtn(blogs.length,blogsCap,'reads','blogs')}
     </div>`;
 
   function blogRow(b){
@@ -115,7 +115,7 @@ function renderDashboard(){
         <div class="panel-head-left">${panelIcon(svgFund)}<h3>Funding &amp; Launches</h3><span class="count-pill">${funding.length} this week</span></div>
       </div>
       ${funding.length ? funding.slice(0,fundCap).map(f=>fundRow(f)).join('') : emptyState('funding updates')}
-      ${viewAllBtn(funding.length,fundCap,'rounds')}
+      ${viewAllBtn(funding.length,fundCap,'rounds','funding updates')}
     </div>`;
 
   function fundRow(f){
@@ -148,9 +148,9 @@ function renderDashboard(){
         </div>`).join('')}
     </div>`;
 
-  function viewAllBtn(total, cap, label){
+  function viewAllBtn(total, cap, key, label){
     if(total<=cap) return '';
-    return `<button class="show-more-btn" onclick="openSection('${label}')">
+    return `<button class="show-more-btn" onclick="openSection('${key}')">
       <span class="more-label">View all ${total} ${label}</span> ${chevron}
     </button>`;
   }

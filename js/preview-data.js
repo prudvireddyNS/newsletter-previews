@@ -152,6 +152,28 @@ function latestWeeklyForDate(date){
   return weeklyEditions.find(item => item.date <= date) || weeklyEditions[0] || null;
 }
 
+function dateAtNoon(date){
+  return new Date(`${date}T12:00:00`);
+}
+
+function weekKey(date){
+  const d = dateAtNoon(date);
+  if(Number.isNaN(d.getTime())) return '';
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function currentWeekDailyEditions(){
+  const latestDate = dailyEditions[0]?.date || activeDailyDate;
+  const latestWeek = weekKey(latestDate);
+  return dailyEditions.filter(item => weekKey(item.date) === latestWeek);
+}
+
+function recentWeeklyEditions(){
+  return weeklyEditions.slice(0, 8);
+}
+
 function rebuildEditionData(){
   signals = toSignals(dailyEdition);
   tools = toTools(dailyEdition);
@@ -193,6 +215,24 @@ function setDailyDate(date, options = {}){
     updateChrome(activeView || initialView);
   }
   if(switchToDaily) setView('daily');
+}
+
+function setWeeklyDate(date, options = {}){
+  const { render = true, switchToWeekly = true } = options;
+  const entry = weeklyEditions.find(item => item.date === date);
+  if(!entry) return;
+  weeklyEdition = entry.edition;
+  rebuildEditionData();
+  if(render){
+    hydrateChrome();
+    renderHome();
+    renderDashboard();
+    if(document.getElementById('view-section').classList.contains('active')){
+      closeSection({ sync: false });
+    }
+    updateChrome(activeView || initialView);
+  }
+  if(switchToWeekly) setView('weekly');
 }
 
 rebuildEditionData();
