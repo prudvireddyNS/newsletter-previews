@@ -29,7 +29,7 @@ if(subscribeForm){
       return;
     }
     button.disabled = true;
-    setSubscribeStatus('Sending confirmation…');
+    setSubscribeStatus('Subscribing…');
     try{
       const response = await fetch(`${subscribeApiBaseUrl}/subscribe`, {
         method: 'POST',
@@ -42,7 +42,7 @@ if(subscribeForm){
         throw new Error(data.detail || 'Could not subscribe. Try again.');
       }
       input.value = '';
-      setSubscribeStatus(data.message || 'Check your email to confirm your subscription.', 'success');
+      setSubscribeStatus(data.message || "You're subscribed. Ekloge will now arrive in your inbox.", 'success');
     }catch(error){
       setSubscribeStatus(error.message || 'Could not subscribe. Try again.', 'error');
     }finally{
