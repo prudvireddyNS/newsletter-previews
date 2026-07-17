@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://prudvireddyNS.github.io/newsletter-previews/sitemap.xml
